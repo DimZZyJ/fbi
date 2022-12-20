@@ -13,7 +13,10 @@
         $username = 'SYSDBA';
         $password = 'masterkey';
         $dbh = ibase_connect($host, $username, $password);
-        
+        $selected_table="PRODUCT";
+        if ($_GET){
+          $selected_table = $_GET['table'];
+        }
         function GetColums($connect,$tableName){
           $request = 'select * from '.$tableName.';';
           $query = ibase_query($connect,$request);
@@ -46,31 +49,39 @@
   ?>
     <nav class="navbar navbar-expand-lg bg-light">
         <div class="container-fluid">
-          <a class="navbar-brand" href="#">FireBirdInterface</a>
+          <a class="navbar-brand" href="#">FireBirdInterface-<?php echo $selected_table; ?></a>
         </div>
       </nav>
-      
+     <div class="container-fluid">
+        <form action="index.php" method="get">
+          <input type="text" name="table" list="tablelist">
+            <datalist id="tablelist">
+              <option value="PRODUCT">  
+              <option value="PRODUCT_CLASSIFIER">
+              <option value="PRODUCT_SPECIFICATION">
+              <option value="UNITS">
+            </datalist>
+          <input type="submit" class="btn btn-success" value="Request">
+        </form>
+     </div> 
     <div class="container-fluid">
       <table class="table">
         <thead>
           <tr>
             <?php
-              GetColums($dbh,"PRODUCT");
+              GetColums($dbh,$selected_table);
             ?>
           </tr>
         </thead>
         <tbody>
           <?php
-            GetData($dbh,"PRODUCT");
+            GetData($dbh,$selected_table);
           ?>
         </tbody>
       </table>
       <?php
         echo "";
       ?>
-      <form action="" method="post">
-        <input type="submit" class="btn btn-success" value="Request">
-      </form>
     </div>
     <?php
       ibase_close($dbh);
